@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Risk Assessment</title>
+    <style>
+        :root { --primary: #2563eb; --high: #dc2626; --med: #d97706; --low: #059669; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 550px; }
+
+        /* New styling for the name section */
+        .name-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .full-width { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 1rem; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #444; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; font-weight: bold; }
+        button:hover { background: #1d4ed8; }
+
+        #result { margin-top: 20px; padding: 15px; border-radius: 4px; text-align: center; display: none; line-height: 1.5; }
+        .HIGH { background: #fee2e2; color: var(--high); border: 1px solid var(--high); }
+        .MEDIUM { background: #fef3c7; color: var(--med); border: 1px solid var(--med); }
+        .LOW { background: #d1fae5; color: var(--low); border: 1px solid var(--low); }
+
+        h2 { margin-top: 0; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🏥 Patient Risk Scorer</h2>
+    <form id="riskForm">
+        <div class="name-section">
+            <label for="patientName">Patient Full Name</label>
+            <input type="text" id="patientName" class="full-width" placeholder="Enter patient name..." required>
+        </div>
+
+        <div class="grid">
+            <div><label>Age</label><input type="number" id="age" required></div>
+            <div><label>Heart Rate (BPM)</label><input type="number" id="heartRate" required></div>
+            <div><label>Systolic BP</label><input type="number" id="systolicBP" required></div>
+            <div><label>SpO2 (%)</label><input type="number" id="spo2" required></div>
+            <div><label>Temp (°C)</label><input type="number" id="temperature" step="0.1" required></div>
+            <div><label>Resp. Rate</label><input type="number" id="respiratoryRate" required></div>
+            <div><label>Chronic Conditions</label><input type="number" id="chronicCount" value="0"></div>
+            <div><label>ER Visits (Last Year)</label><input type="number" id="erVisits" value="0"></div>
+        </div>
+
+        <label>Abnormal Lab Results?</label>
+        <div class="grid">
+            <select id="wbc"><option value="no">WBC Normal</option><option value="yes">WBC Abnormal</option></select>
+            <select id="creatinine"><option value="no">Creatinine Normal</option><option value="yes">Creatinine Abnormal</option></select>
+            <select id="crp"><option value="no">CRP Normal</option><option value="yes">CRP Abnormal</option></select>
+        </div>
+
+        <button type="submit">Analyze Risk</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    const form = document.getElementById('riskForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Capture the name locally
+        const name = document.getElementById('patientName').value;
+
+        // Collect numerical/lab data for the backend
+        const formData = {
+            age: parseInt(document.getElementById('age').value),
+            heartRate: parseInt(document.getElementById('heartRate').value),
+            systolicBP: parseInt(document.getElementById('systolicBP').value),
+            spo2: parseInt(document.getElementById('spo2').value),
+            temperature: parseFloat(document.getElementById('temperature').value),
+            respiratoryRate: parseInt(document.getElementById('respiratoryRate').value),
+            chronicCount: parseInt(document.getElementById('chronicCount').value),
+            erVisits: parseInt(document.getElementById('erVisits').value),
+            wbc: document.getElementById('wbc').value,
+            creatinine: document.getElementById('creatinine').value,
+            crp: document.getElementById('crp').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:5000/calculate-risk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            // Display result including the patient name
+            resultDiv.style.display = 'block';
+            resultDiv.className = data.level;
+            resultDiv.innerHTML = `
+                <h3>Assessment for: ${name}</h3>
+                <hr>
+                <strong>Risk Level: ${data.level}</strong><br>
+                Total Clinical Score: ${data.score}
+            `;
+
+        } catch (error) {
+            alert('Error connecting to backend. Make sure your server is running!');
+            console.error(error);
+        }
+    });
+</script>
+
+</body>
+</html>

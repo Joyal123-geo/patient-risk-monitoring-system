@@ -1,0 +1,164 @@
+/* ============================= */
+/* General Page Styling */
+/* ============================= */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(to right, #e3f2fd, #f9fbff);
+  margin: 0;
+  padding: 0;
+}
+
+/* Page Title */
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  color: #003366;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* ============================= */
+/* Main Container Card */
+/* ============================= */
+.container {
+  max-width: 750px;
+  margin: 30px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Section Heading */
+h2 {
+  text-align: center;
+  color: #00509e;
+  margin-bottom: 20px;
+}
+
+h3 {
+  margin-top: 20px;
+  color: #003366;
+}
+
+/* ============================= */
+/* Form Labels */
+/* ============================= */
+label {
+  font-weight: 600;
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+/* ============================= */
+/* Input Fields */
+/* ============================= */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+/* Input Focus Effect */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.4);
+}
+
+/* Notes Box */
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+/* ============================= */
+/* Button Styling */
+/* ============================= */
+button {
+  margin-top: 25px;
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  background: linear-gradient(to right, #007bff, #0056b3);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Button Hover */
+button:hover {
+  transform: scale(1.02);
+  background: linear-gradient(to right, #0056b3, #003f88);
+  box-shadow: 0px 6px 15px rgba(0, 123, 255, 0.4);
+}
+
+/* ============================= */
+/* Report Output Box */
+/* ============================= */
+.report {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 15px;
+  background: #f1faff;
+  border-left: 6px solid #007bff;
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+/* Report Text */
+.report p {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+/* ============================= */
+/* Risk Level Colors */
+/* ============================= */
+.risk-high {
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.risk-medium {
+  color: orange;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.risk-low {
+  color: green;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* ============================= */
+/* Responsive Design */
+/* ============================= */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  button {
+    font-size: 16px;
+  }
+}
