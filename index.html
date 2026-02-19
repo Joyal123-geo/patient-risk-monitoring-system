@@ -62,6 +62,19 @@
     <div id="result"></div>
 </div>
 
+<style>
+    /* ... existing styles ... */
+    .summary-list {
+        text-align: left;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(255,255,255,0.5);
+        border-radius: 4px;
+    }
+    .summary-list div { margin-bottom: 4px; border-bottom: 1px dotted rgba(0,0,0,0.1); }
+</style>
+
 <script>
     const form = document.getElementById('riskForm');
     const resultDiv = document.getElementById('result');
@@ -69,19 +82,32 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Capture the name locally
-        const name = document.getElementById('patientName').value;
+        // 1. Capture all patient details
+        const patientName = document.getElementById('patientName').value;
+        const age = document.getElementById('age').value;
+        const hr = document.getElementById('heartRate').value;
+        const sbp = document.getElementById('systolicBP').value;
+        const spo2 = document.getElementById('spo2').value;
+        const temp = document.getElementById('temperature').value;
+        const rr = document.getElementById('respiratoryRate').value;
+        const chronic = document.getElementById('chronicCount').value;
+        const er = document.getElementById('erVisits').value;
 
-        // Collect numerical/lab data for the backend
+        // Lab results text for display
+        const wbc = document.getElementById('wbc').options[document.getElementById('wbc').selectedIndex].text;
+        const creat = document.getElementById('creatinine').options[document.getElementById('creatinine').selectedIndex].text;
+        const crp = document.getElementById('crp').options[document.getElementById('crp').selectedIndex].text;
+
+        // 2. Prepare data for backend
         const formData = {
-            age: parseInt(document.getElementById('age').value),
-            heartRate: parseInt(document.getElementById('heartRate').value),
-            systolicBP: parseInt(document.getElementById('systolicBP').value),
-            spo2: parseInt(document.getElementById('spo2').value),
-            temperature: parseFloat(document.getElementById('temperature').value),
-            respiratoryRate: parseInt(document.getElementById('respiratoryRate').value),
-            chronicCount: parseInt(document.getElementById('chronicCount').value),
-            erVisits: parseInt(document.getElementById('erVisits').value),
+            age: parseInt(age),
+            heartRate: parseInt(hr),
+            systolicBP: parseInt(sbp),
+            spo2: parseInt(spo2),
+            temperature: parseFloat(temp),
+            respiratoryRate: parseInt(rr),
+            chronicCount: parseInt(chronic),
+            erVisits: parseInt(er),
             wbc: document.getElementById('wbc').value,
             creatinine: document.getElementById('creatinine').value,
             crp: document.getElementById('crp').value
@@ -96,14 +122,24 @@
 
             const data = await response.json();
 
-            // Display result including the patient name
+            // 3. Display Result + Full Patient Summary
             resultDiv.style.display = 'block';
             resultDiv.className = data.level;
+
             resultDiv.innerHTML = `
-                <h3>Assessment for: ${name}</h3>
+                <h3>Assessment for: ${patientName}</h3>
+                <h2 style="margin: 5px 0;">Risk Level: ${data.level}</h2>
+                <p>Total Clinical Score: <strong>${data.score}</strong></p>
                 <hr>
-                <strong>Risk Level: ${data.level}</strong><br>
-                Total Clinical Score: ${data.score}
+                <div class="summary-list">
+                    <strong>Vitals & History:</strong>
+                    <div>• Age: ${age} | HR: ${hr} BPM | BP: ${sbp} mmHg</div>
+                    <div>• SpO2: ${spo2}% | Temp: ${temp}°C | Resp: ${rr}</div>
+                    <div>• Chronic Conditions: ${chronic} | ER Visits (Yr): ${er}</div>
+                    <br>
+                    <strong>Lab Status:</strong>
+                    <div>• ${wbc} | ${creat} | ${crp}</div>
+                </div>
             `;
 
         } catch (error) {
